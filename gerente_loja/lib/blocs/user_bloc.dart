@@ -21,16 +21,49 @@ class UserBloc extends BlocBase {
         switch (change.type) {
           case DocumentChangeType.added:
             _users[uid] = change.doc.data()!;
+            _subscribeToOrders(uid);
             break;
           case DocumentChangeType.modified:
             _users[uid]!.addAll(change.doc.data()!);
+            _usersController.add(_users.values.toList());
             break;
           case DocumentChangeType.removed:
             _users.remove(uid);
+            _unsubscribeToOrders(uid);
+            _usersController.add(_users.values.toList());
             break;
         }
       });
     });
+  }
+
+  void _subscribeToOrders(String uid) {
+    _users[uid]!["subscription"] = _firestore
+        .collection("users")
+        .doc(uid)
+        .collection("orders")
+        .snapshots()
+        .listen((orders) async {
+      int numOrders = orders.docs.length;
+      double money = 0.0;
+
+      for (DocumentSnapshot doc in orders.docs) {
+        DocumentSnapshot order =
+            await _firestore.collection("orders").doc(doc.id).get();
+
+        if (order.data() == null) continue;
+
+        money += order.get("totalPrice");
+      }
+
+      _users[uid]!.addAll({"money": money, "orders": numOrders});
+
+      _usersController.add(_users.values.toList());
+    });
+  }
+
+  void _unsubscribeToOrders(String uid) {
+    _users[uid]!["subscription"].cancel();
   }
 
   @override
