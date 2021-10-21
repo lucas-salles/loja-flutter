@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gerente_loja/blocs/login_bloc.dart';
 import 'package:gerente_loja/widgets/input_field.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -9,6 +10,20 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  late LoginBloc _loginBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _loginBloc = LoginBloc();
+  }
+
+  @override
+  void dispose() {
+    _loginBloc.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,30 +44,39 @@ class _LoginScreenState extends State<LoginScreen> {
                   icon: Icons.person_outline,
                   hint: "Usuário",
                   obscure: false,
+                  stream: _loginBloc.outEmail,
+                  onChanged: _loginBloc.changeEmail,
                 ),
                 InputField(
                   icon: Icons.lock_outline,
                   hint: "Senha",
                   obscure: true,
+                  stream: _loginBloc.outPassword,
+                  onChanged: _loginBloc.changePassword,
                 ),
                 SizedBox(
                   height: 32,
                 ),
-                SizedBox(
-                  height: 50,
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    child: Text(
-                      "Entrar",
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      primary: Colors.pinkAccent,
-                    ),
-                  ),
-                ),
+                StreamBuilder<bool>(
+                    stream: _loginBloc.outSubmitValid,
+                    builder: (context, snapshot) {
+                      return SizedBox(
+                        height: 50,
+                        child: ElevatedButton(
+                          onPressed: snapshot.data != null ? () {} : null,
+                          child: Text(
+                            "Entrar",
+                            style: TextStyle(
+                              color: Colors.white,
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.pinkAccent,
+                            onSurface: Colors.pinkAccent.withAlpha(140),
+                          ),
+                        ),
+                      );
+                    }),
               ],
             ),
           ),

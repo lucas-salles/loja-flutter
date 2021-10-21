@@ -12,7 +12,7 @@ class LoginValidators {
 
   final validatePassword = StreamTransformer<String, String>.fromHandlers(
       handleData: (password, sink) {
-    if (password.length > 4) {
+    if (password.length >= 4) {
       sink.add(password);
     } else {
       sink.addError("Senha inválida, deve conter pelo menos 4 caracteres");
