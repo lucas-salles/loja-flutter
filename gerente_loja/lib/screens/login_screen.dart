@@ -10,13 +10,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  late LoginBloc _loginBloc;
-
-  @override
-  void initState() {
-    super.initState();
-    _loginBloc = LoginBloc();
-  }
+  final LoginBloc _loginBloc = LoginBloc();
 
   @override
   void dispose() {
@@ -63,7 +57,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       return SizedBox(
                         height: 50,
                         child: ElevatedButton(
-                          onPressed: snapshot.data != null ? () {} : null,
+                          onPressed:
+                              snapshot.hasData ? _loginBloc.submit : null,
                           child: Text(
                             "Entrar",
                             style: TextStyle(
