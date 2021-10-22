@@ -60,6 +60,10 @@ class UserBloc extends BlocBase {
     });
   }
 
+  Map<String, dynamic> getUser(String uid) {
+    return _users[uid]!;
+  }
+
   void _subscribeToOrders(String uid) {
     _users[uid]!["subscription"] = _firestore
         .collection("users")

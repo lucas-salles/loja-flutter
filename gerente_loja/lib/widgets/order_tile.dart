@@ -26,6 +26,8 @@ class OrderTile extends StatelessWidget {
       ),
       child: Card(
         child: ExpansionTile(
+          key: Key(order.id),
+          initiallyExpanded: order.get("status") != 4,
           title: Text(
             "#${order.id.substring(order.id.length - 7, order.id.length)} - ${states[order.get("status")]}",
             style: TextStyle(
@@ -43,7 +45,7 @@ class OrderTile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  OrderHeader(),
+                  OrderHeader(order: order),
                   Column(
                     mainAxisSize: MainAxisSize.min,
                     children: order.get("products").map<Widget>((product) {
@@ -66,7 +68,15 @@ class OrderTile extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          FirebaseFirestore.instance
+                              .collection("users")
+                              .doc(order["clientId"])
+                              .collection("orders")
+                              .doc(order.id)
+                              .delete();
+                          order.reference.delete();
+                        },
                         child: Text(
                           "Excluir",
                           style: TextStyle(
@@ -75,7 +85,13 @@ class OrderTile extends StatelessWidget {
                         ),
                       ),
                       TextButton(
-                        onPressed: () {},
+                        onPressed: order.get("status") > 1
+                            ? () {
+                                order.reference.update({
+                                  "status": order.get("status") - 1,
+                                });
+                              }
+                            : null,
                         child: Text(
                           "Regredir",
                           style: TextStyle(
@@ -84,7 +100,13 @@ class OrderTile extends StatelessWidget {
                         ),
                       ),
                       TextButton(
-                        onPressed: () {},
+                        onPressed: order.get("status") < 4
+                            ? () {
+                                order.reference.update({
+                                  "status": order.get("status") + 1,
+                                });
+                              }
+                            : null,
                         child: Text(
                           "Avançar",
                           style: TextStyle(
