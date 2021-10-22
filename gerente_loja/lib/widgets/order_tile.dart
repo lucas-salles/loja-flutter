@@ -1,10 +1,21 @@
 import 'dart:ui';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:gerente_loja/widgets/order_header.dart';
 
 class OrderTile extends StatelessWidget {
-  const OrderTile({Key? key}) : super(key: key);
+  final DocumentSnapshot order;
+
+  final states = [
+    "",
+    "Em preparação",
+    "Em transporte",
+    "Aguardadno entrega",
+    "Entregue"
+  ];
+
+  OrderTile({Key? key, required this.order}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -16,9 +27,9 @@ class OrderTile extends StatelessWidget {
       child: Card(
         child: ExpansionTile(
           title: Text(
-            "#1231 - Entregue",
+            "#${order.id.substring(order.id.length - 7, order.id.length)} - ${states[order.get("status")]}",
             style: TextStyle(
-              color: Colors.green,
+              color: order.get("status") != 4 ? Colors.grey[850] : Colors.green,
             ),
           ),
           children: [
@@ -35,19 +46,21 @@ class OrderTile extends StatelessWidget {
                   OrderHeader(),
                   Column(
                     mainAxisSize: MainAxisSize.min,
-                    children: [
-                      ListTile(
-                        title: Text("Camiseta Preta P"),
-                        subtitle: Text("Camisetas/dasdsadas"),
+                    children: order.get("products").map<Widget>((product) {
+                      return ListTile(
+                        title: Text(
+                            "${product["product"]["title"]} ${product["size"]}"),
+                        subtitle:
+                            Text("${product["category"]}/${product["pid"]}"),
                         trailing: Text(
-                          "2",
+                          product["quantity"].toString(),
                           style: TextStyle(
                             fontSize: 20,
                           ),
                         ),
                         contentPadding: EdgeInsets.zero,
-                      ),
-                    ],
+                      );
+                    }).toList(),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
