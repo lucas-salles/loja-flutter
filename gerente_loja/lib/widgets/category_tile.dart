@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:gerente_loja/screens/product_screen.dart';
 
 class CategoryTile extends StatelessWidget {
   final DocumentSnapshot category;
@@ -44,7 +45,13 @@ class CategoryTile extends StatelessWidget {
                         title: Text(doc.get("title")),
                         trailing:
                             Text("R\$ ${doc.get("price").toStringAsFixed(2)}"),
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => ProductScreen(
+                                    categoryId: category.id,
+                                    product: doc,
+                                  )));
+                        },
                       );
                     }).toList()
                       ..add(
@@ -57,7 +64,12 @@ class CategoryTile extends StatelessWidget {
                             ),
                           ),
                           title: Text("Adicionar"),
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => ProductScreen(
+                                      categoryId: category.id,
+                                    )));
+                          },
                         ),
                       ),
                   );
