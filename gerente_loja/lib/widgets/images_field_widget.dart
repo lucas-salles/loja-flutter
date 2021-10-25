@@ -15,6 +15,7 @@ class ImagesFieldWidget extends FormField<List> {
             initialValue: initialValue,
             builder: (state) {
               return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
                     height: 124,

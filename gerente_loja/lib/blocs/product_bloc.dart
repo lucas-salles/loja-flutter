@@ -30,6 +30,22 @@ class ProductBloc extends BlocBase {
     _dataController.add(unsavedData);
   }
 
+  void saveTitle(String? title) {
+    if (title != null) unsavedData["title"] = title;
+  }
+
+  void saveDescription(String? description) {
+    if (description != null) unsavedData["description"] = description;
+  }
+
+  void savePrice(String? price) {
+    if (price != null) unsavedData["price"] = double.parse(price);
+  }
+
+  void saveImages(List? images) {
+    if (images != null) unsavedData["images"] = images;
+  }
+
   @override
   void dispose() {
     _dataController.close();
