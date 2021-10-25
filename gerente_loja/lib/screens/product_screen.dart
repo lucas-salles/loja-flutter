@@ -56,68 +56,112 @@ class _ProductScreenState extends State<ProductScreen> with ProductValidator {
             onPressed: () {},
             icon: Icon(Icons.remove),
           ),
-          IconButton(
-            onPressed: () {
-              if (_formKey.currentState!.validate()) {
-                _formKey.currentState!.save();
-              }
-            },
-            icon: Icon(Icons.save),
-          ),
+          StreamBuilder<bool>(
+              stream: widget._productBloc.outloading,
+              initialData: false,
+              builder: (context, snapshot) {
+                return IconButton(
+                  onPressed: snapshot.data! ? null : saveProduct,
+                  icon: Icon(Icons.save),
+                );
+              }),
         ],
       ),
-      body: Form(
-        key: _formKey,
-        child: StreamBuilder<Map>(
-            stream: widget._productBloc.outData,
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return Container();
-              }
-              return ListView(
-                padding: EdgeInsets.all(16),
-                children: [
-                  Text(
-                    "Imagens",
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 12,
-                    ),
+      body: Stack(
+        children: [
+          Form(
+            key: _formKey,
+            child: StreamBuilder<Map>(
+                stream: widget._productBloc.outData,
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return Container();
+                  }
+                  return ListView(
+                    padding: EdgeInsets.all(16),
+                    children: [
+                      Text(
+                        "Imagens",
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 12,
+                        ),
+                      ),
+                      ImagesFieldWidget(
+                        context: context,
+                        initialValue: snapshot.data!["images"],
+                        onSaved: widget._productBloc.saveImages,
+                        validator: validateImages,
+                      ),
+                      TextFormField(
+                        initialValue: snapshot.data!["title"],
+                        style: _fieldStyle,
+                        decoration: _buildDecoration("Título"),
+                        onSaved: widget._productBloc.saveTitle,
+                        validator: validateTitle,
+                      ),
+                      TextFormField(
+                        initialValue: snapshot.data!["description"],
+                        style: _fieldStyle,
+                        maxLines: 6,
+                        decoration: _buildDecoration("Descrição"),
+                        onSaved: widget._productBloc.saveDescription,
+                        validator: validateDescription,
+                      ),
+                      TextFormField(
+                        initialValue:
+                            snapshot.data!["price"]?.toStringAsFixed(2),
+                        style: _fieldStyle,
+                        decoration: _buildDecoration("Preço"),
+                        keyboardType:
+                            TextInputType.numberWithOptions(decimal: true),
+                        onSaved: widget._productBloc.savePrice,
+                        validator: validatePrice,
+                      ),
+                    ],
+                  );
+                }),
+          ),
+          StreamBuilder<bool>(
+              stream: widget._productBloc.outloading,
+              initialData: false,
+              builder: (context, snapshot) {
+                return IgnorePointer(
+                  ignoring: !snapshot.data!,
+                  child: Container(
+                    color: snapshot.data! ? Colors.black54 : Colors.transparent,
                   ),
-                  ImagesFieldWidget(
-                    context: context,
-                    initialValue: snapshot.data!["images"],
-                    onSaved: widget._productBloc.saveImages,
-                    validator: validateImages,
-                  ),
-                  TextFormField(
-                    initialValue: snapshot.data!["title"],
-                    style: _fieldStyle,
-                    decoration: _buildDecoration("Título"),
-                    onSaved: widget._productBloc.saveTitle,
-                    validator: validateTitle,
-                  ),
-                  TextFormField(
-                    initialValue: snapshot.data!["description"],
-                    style: _fieldStyle,
-                    maxLines: 6,
-                    decoration: _buildDecoration("Descrição"),
-                    onSaved: widget._productBloc.saveDescription,
-                    validator: validateDescription,
-                  ),
-                  TextFormField(
-                    initialValue: snapshot.data!["price"]?.toStringAsFixed(2),
-                    style: _fieldStyle,
-                    decoration: _buildDecoration("Preço"),
-                    keyboardType:
-                        TextInputType.numberWithOptions(decimal: true),
-                    onSaved: widget._productBloc.savePrice,
-                    validator: validatePrice,
-                  ),
-                ],
-              );
-            }),
+                );
+              }),
+        ],
       ),
     );
+  }
+
+  void saveProduct() async {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(
+          "Salvando produto...",
+          style: TextStyle(color: Colors.white),
+        ),
+        duration: Duration(minutes: 1),
+        backgroundColor: Colors.pinkAccent,
+      ));
+
+      bool success = await widget._productBloc.saveProduct();
+
+      ScaffoldMessenger.of(context).removeCurrentSnackBar();
+
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(
+          success ? "Produto salvo!" : "Erro ao salvar produto!",
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Colors.pinkAccent,
+      ));
+    }
   }
 }

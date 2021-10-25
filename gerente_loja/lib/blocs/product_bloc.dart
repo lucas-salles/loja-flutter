@@ -4,8 +4,10 @@ import 'package:rxdart/rxdart.dart';
 
 class ProductBloc extends BlocBase {
   final _dataController = BehaviorSubject<Map>();
+  final _loadingController = BehaviorSubject<bool>();
 
   Stream<Map> get outData => _dataController.stream;
+  Stream<bool> get outloading => _loadingController.stream;
 
   String categoryId;
   DocumentSnapshot? product;
@@ -46,9 +48,17 @@ class ProductBloc extends BlocBase {
     if (images != null) unsavedData["images"] = images;
   }
 
+  Future<bool> saveProduct() async {
+    _loadingController.add(true);
+    await Future.delayed(Duration(seconds: 3));
+    _loadingController.add(false);
+    return true;
+  }
+
   @override
   void dispose() {
     _dataController.close();
+    _loadingController.close();
     super.dispose();
   }
 }
