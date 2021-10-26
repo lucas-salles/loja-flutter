@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
         primaryColor: Colors.pinkAccent,
       ),
       debugShowCheckedModeBanner: false,
-      home: HomeScreen(),
+      home: LoginScreen(),
     );
   }
 }

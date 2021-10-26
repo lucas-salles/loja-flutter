@@ -28,12 +28,6 @@ class UserBloc extends BlocBase {
         .where(
             (user) => user["name"].toUpperCase().contains(search.toUpperCase()))
         .toList();
-    // List<Map<String, dynamic>> filteredUsers =
-    //     List.from(_users.values.toList());
-    // filteredUsers.retainWhere((user) {
-    //   return user["name"].toUpperCase().contains(search.toUpperCase());
-    // });
-    // return filteredUsers;
   }
 
   void _addUsersListener() {
