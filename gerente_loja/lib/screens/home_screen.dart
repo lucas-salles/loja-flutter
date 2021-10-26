@@ -6,6 +6,7 @@ import 'package:gerente_loja/blocs/user_bloc.dart';
 import 'package:gerente_loja/tabs/orders_tab.dart';
 import 'package:gerente_loja/tabs/products_tab.dart';
 import 'package:gerente_loja/tabs/users_tab.dart';
+import 'package:gerente_loja/widgets/edit_category_dialog.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -96,42 +97,51 @@ class _HomeScreenState extends State<HomeScreen> {
       case 0:
         return null;
       case 1:
+        return SpeedDial(
+          child: Icon(Icons.sort),
+          backgroundColor: Colors.pinkAccent,
+          overlayOpacity: 0.4,
+          overlayColor: Colors.black,
+          children: [
+            SpeedDialChild(
+              child: Icon(
+                Icons.arrow_downward,
+                color: Colors.pinkAccent,
+              ),
+              backgroundColor: Colors.white,
+              label: "Concluídos Abaixo",
+              labelStyle: TextStyle(
+                fontSize: 14,
+              ),
+              onTap: () {
+                _ordersBloc.setOrderCriteria(SortCriteria.READY_LAST);
+              },
+            ),
+            SpeedDialChild(
+              child: Icon(
+                Icons.arrow_upward,
+                color: Colors.pinkAccent,
+              ),
+              backgroundColor: Colors.white,
+              label: "Concluídos Acima",
+              labelStyle: TextStyle(
+                fontSize: 14,
+              ),
+              onTap: () {
+                _ordersBloc.setOrderCriteria(SortCriteria.READY_FIRST);
+              },
+            ),
+          ],
+        );
+      case 2:
+        return FloatingActionButton(
+          onPressed: () {
+            showDialog(
+                context: context, builder: (context) => EditCategoryDialog());
+          },
+          child: Icon(Icons.add),
+          backgroundColor: Colors.pinkAccent,
+        );
     }
-    return SpeedDial(
-      child: Icon(Icons.sort),
-      backgroundColor: Colors.pinkAccent,
-      overlayOpacity: 0.4,
-      overlayColor: Colors.black,
-      children: [
-        SpeedDialChild(
-          child: Icon(
-            Icons.arrow_downward,
-            color: Colors.pinkAccent,
-          ),
-          backgroundColor: Colors.white,
-          label: "Concluídos Abaixo",
-          labelStyle: TextStyle(
-            fontSize: 14,
-          ),
-          onTap: () {
-            _ordersBloc.setOrderCriteria(SortCriteria.READY_LAST);
-          },
-        ),
-        SpeedDialChild(
-          child: Icon(
-            Icons.arrow_upward,
-            color: Colors.pinkAccent,
-          ),
-          backgroundColor: Colors.white,
-          label: "Concluídos Acima",
-          labelStyle: TextStyle(
-            fontSize: 14,
-          ),
-          onTap: () {
-            _ordersBloc.setOrderCriteria(SortCriteria.READY_FIRST);
-          },
-        ),
-      ],
-    );
   }
 }

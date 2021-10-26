@@ -20,7 +20,10 @@ class CategoryTile extends StatelessWidget {
           leading: GestureDetector(
             onTap: () {
               showDialog(
-                  context: context, builder: (context) => EditCategoryDialog());
+                  context: context,
+                  builder: (context) => EditCategoryDialog(
+                        category: category,
+                      ));
             },
             child: CircleAvatar(
               backgroundImage: NetworkImage(
