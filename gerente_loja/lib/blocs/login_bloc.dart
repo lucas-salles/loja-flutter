@@ -57,6 +57,11 @@ class LoginBloc extends BlocBase with LoginValidators {
     }
   }
 
+  Future<void> signOut() async {
+    await FirebaseAuth.instance.signOut();
+    _stateController.add(LoginState.IDLE);
+  }
+
   Future<bool> verifyPrivileges(User user) async {
     return await FirebaseFirestore.instance
         .collection("admins")

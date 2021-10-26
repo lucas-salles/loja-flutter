@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gerente_loja/screens/home_screen.dart';
 import 'package:gerente_loja/screens/login_screen.dart';
 
 class MyApp extends StatelessWidget {
