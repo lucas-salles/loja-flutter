@@ -43,7 +43,7 @@ class InputField extends StatelessWidget {
                 bottom: 30,
                 top: 30,
               ),
-              errorText: snapshot.hasError ? (snapshot.error) as String : null,
+              errorText: snapshot.hasError ? snapshot.error as String : null,
             ),
             style: TextStyle(
               color: Colors.white,

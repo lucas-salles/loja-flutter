@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:gerente_loja/blocs/category_bloc.dart';
+import 'package:gerente_loja/widgets/image_source_sheet.dart';
 
 class EditCategoryDialog extends StatefulWidget {
   final DocumentSnapshot? category;
@@ -30,6 +31,15 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
           children: [
             ListTile(
               leading: GestureDetector(
+                onTap: () {
+                  showModalBottomSheet(
+                      context: context,
+                      builder: (context) =>
+                          ImageSourceSheet(onImageSelected: (image) {
+                            Navigator.of(context).pop();
+                            widget._categoryBloc.setImage(image);
+                          }));
+                },
                 child: StreamBuilder(
                     stream: widget._categoryBloc.outImage,
                     builder: (context, snapshot) {
@@ -51,9 +61,18 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
                       }
                     }),
               ),
-              title: TextField(
-                controller: widget._controller,
-              ),
+              title: StreamBuilder<String>(
+                  stream: widget._categoryBloc.outTitle,
+                  builder: (context, snapshot) {
+                    return TextField(
+                      controller: widget._controller,
+                      onChanged: widget._categoryBloc.setTitle,
+                      decoration: InputDecoration(
+                        errorText:
+                            snapshot.hasError ? snapshot.error as String : null,
+                      ),
+                    );
+                  }),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -72,10 +91,20 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
                         ),
                       );
                     }),
-                TextButton(
-                  onPressed: () {},
-                  child: Text("Salvar"),
-                ),
+                StreamBuilder<bool>(
+                    stream: widget._categoryBloc.submitValid,
+                    builder: (context, snapshot) {
+                      return TextButton(
+                        onPressed: snapshot.hasData ? () {} : null,
+                        child: Text(
+                          "Salvar",
+                          style: TextStyle(
+                            color:
+                                snapshot.hasData ? Colors.black : Colors.grey,
+                          ),
+                        ),
+                      );
+                    }),
               ],
             )
           ],
