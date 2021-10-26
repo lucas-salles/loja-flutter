@@ -82,7 +82,12 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
                     builder: (context, snapshot) {
                       if (!snapshot.hasData) return Container();
                       return TextButton(
-                        onPressed: snapshot.data! ? () {} : null,
+                        onPressed: snapshot.data!
+                            ? () {
+                                widget._categoryBloc.delete();
+                                Navigator.of(context).pop();
+                              }
+                            : null,
                         child: Text(
                           "Excluir",
                           style: TextStyle(
@@ -95,7 +100,12 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
                     stream: widget._categoryBloc.submitValid,
                     builder: (context, snapshot) {
                       return TextButton(
-                        onPressed: snapshot.hasData ? () {} : null,
+                        onPressed: snapshot.hasData
+                            ? () async {
+                                await widget._categoryBloc.saveData();
+                                Navigator.of(context).pop();
+                              }
+                            : null,
                         child: Text(
                           "Salvar",
                           style: TextStyle(

@@ -99,9 +99,7 @@ class ProductBloc extends BlocBase {
           .child(productId)
           .child(DateTime.now().millisecondsSinceEpoch.toString());
 
-      TaskSnapshot taskSnapshot = await reference
-          .putFile(unsavedData["images"][i])
-          .whenComplete(() async {
+      await reference.putFile(unsavedData["images"][i]).whenComplete(() async {
         String downloadURL = await reference.getDownloadURL();
         unsavedData["images"][i] = downloadURL;
       });

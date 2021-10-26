@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:rxdart/rxdart.dart';
 
 class CategoryBloc extends BlocBase {
@@ -30,8 +31,13 @@ class CategoryBloc extends BlocBase {
   File? image;
   String? title;
 
+  FirebaseStorage _storage = FirebaseStorage.instance;
+  FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
   CategoryBloc({this.category}) {
     if (category != null) {
+      title = category!.get("title");
+
       _titleController.add(category!.get("title"));
       _imageController.add(category!.get("icon"));
       _deleteController.add(true);
@@ -48,6 +54,39 @@ class CategoryBloc extends BlocBase {
   void setTitle(String title) {
     this.title = title;
     _titleController.add(title);
+  }
+
+  Future<void> saveData() async {
+    if (image == null && category != null && title == category!.get("title")) {
+      return;
+    }
+
+    Map<String, dynamic> dataToUpdate = {};
+    if (image != null) {
+      Reference reference = _storage.ref().child(title!);
+
+      await reference.putFile(image!).whenComplete(() async {
+        String downloadURL = await reference.getDownloadURL();
+        dataToUpdate["icon"] = downloadURL;
+      });
+    }
+
+    if (category == null || title != category!.get("title")) {
+      dataToUpdate["title"] = title;
+    }
+
+    if (category == null) {
+      await _firestore
+          .collection("products")
+          .doc(title!.toLowerCase())
+          .set(dataToUpdate);
+    } else {
+      await category!.reference.update(dataToUpdate);
+    }
+  }
+
+  void delete() {
+    category!.reference.delete();
   }
 
   @override
