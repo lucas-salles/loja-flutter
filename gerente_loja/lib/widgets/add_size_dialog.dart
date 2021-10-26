@@ -19,6 +19,13 @@ class AddSizeDialod extends StatelessWidget {
           children: [
             TextField(
               controller: _controller,
+              decoration: InputDecoration(
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.pinkAccent,
+                  ),
+                ),
+              ),
             ),
             Container(
               alignment: Alignment.centerRight,

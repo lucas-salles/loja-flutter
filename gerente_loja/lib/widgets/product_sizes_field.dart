@@ -52,10 +52,10 @@ class ProductSizesField extends FormField<List> {
                       ..add(
                         GestureDetector(
                           onTap: () async {
-                            String newSize = await showDialog(
+                            String? newSize = await showDialog(
                                 context: context,
                                 builder: (context) => AddSizeDialod());
-                            if (newSize != "") {
+                            if (newSize != null) {
                               state.didChange(state.value!..add(newSize));
                             }
                           },
