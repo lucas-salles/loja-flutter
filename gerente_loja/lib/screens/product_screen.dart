@@ -154,9 +154,14 @@ class _ProductScreenState extends State<ProductScreen> with ProductValidator {
                         ),
                       ),
                       ProductSizesField(
+                        context: context,
                         initialValue: snapshot.data!["sizes"],
-                        onSaved: (sizes) {},
-                        validator: (sizes) {},
+                        onSaved: widget._productBloc.saveSizes,
+                        validator: (sizes) {
+                          if (sizes == null || sizes.isEmpty) {
+                            return "Adicione um tamanho";
+                          }
+                        },
                       ),
                     ],
                   );
