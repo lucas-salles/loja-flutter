@@ -179,20 +179,3 @@ class _ProductScreenState extends State<ProductScreen> {
     );
   }
 }
-
-// AspectRatio(
-//             aspectRatio: 0.9,
-//             child: Carousel(
-//               images: widget.product.images.map((url) {
-//                 return NetworkImage(url);
-//               }).toList(),
-//               dotSize: 4,
-//               dotSpacing: 15,
-//               dotBgColor: Colors.transparent,
-//               dotColor: primaryColor,
-//               autoplay: false,
-//             ),
-//           ),
-
-
-// return Image.network(url);
